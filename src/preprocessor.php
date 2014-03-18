@@ -136,6 +136,30 @@ namespace TheSeer\Tools {
          return true;
       }
 
+
+      /**
+       * Handling code for '#undef' statements
+       *
+       * @param string $payload Payload value for statement if given
+       *
+       * @return boolean
+       */
+      protected function undefDirective($payload) {
+        if (!$this->skipOver) {
+          if (is_null($payload)) return false;
+          $def = explode(' ', $payload);
+          if (isset($this->defines[$def[0]])) {
+            unset($this->defines[$def[0]]);
+          }
+          //$this->defines[$def[0]] = substr($def[1],1,-1);
+        }
+        return true;
+      }      
+      
+      protected function undefineDirective($payload) {
+        return $this->undefDirective($payload);
+      }
+      
       /**
        * Handling code for '#include' statements, replacing directive by file contents
        *
@@ -229,6 +253,13 @@ namespace TheSeer\Tools {
          return true;
       }
 
+      protected function warningDirective($payload) {
+        if (!$this->skipOver) {
+          echo "[PPP] * Warning: $payload\n";
+        }
+        return true;
+      }      
+      
    }
 
    /**
@@ -239,6 +270,7 @@ namespace TheSeer\Tools {
     */
    class PreProcessorException extends \Exception {
       const NotFound = 1;
+      const NoRedefine = 2;
    }
 
 }

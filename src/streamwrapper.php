@@ -94,6 +94,10 @@ namespace TheSeer\Tools {
          $this->sourceLen = 0;
       }
 
+      public static function hashPath($path) {
+        return sha1($path);  
+      }
+      
       public static function setProtocol($proto) {
          self::$properties['protocol'] = $proto;
       }
@@ -113,14 +117,14 @@ namespace TheSeer\Tools {
          }
          $this->stat = stat($path);
          if (isset(self::$properties['cache'])) {
-            $cache = self::$properties['cache'] . '/' . sha1($path) . '.php';
+            $cache = self::$properties['cache'] . '/' . self::hashPath($path) . '.php';
             if (file_exists($cache) && filemtime($cache)>=filemtime($path)) {
                $this->source = file_get_contents($cache);
                $this->sourceLen = strlen($this->source);
                return true;
             }
          }
-         if (!self::$properties['processor']) {
+         if (!isset(self::$properties['processor'])) {
             $proc = new PreProcessor();
          } else {
             $proc = self::$properties['processor'];
@@ -129,6 +133,9 @@ namespace TheSeer\Tools {
          $this->sourceLen = strlen($this->source);
          if (isset(self::$properties['cache'])) {
             file_put_contents($cache, $this->source);
+            
+            $log = file_get_contents('preprocessor.log');
+            file_put_contents('preprocessor.log', $log . $cache . "\t" . filemtime($cache) . PHP_EOL);
          }
          return true;
       }
