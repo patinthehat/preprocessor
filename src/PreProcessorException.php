@@ -1,4 +1,7 @@
 <?php
+/**
+ * PreProcessorException
+ */
 
 namespace TheSeer\Tools {
   
