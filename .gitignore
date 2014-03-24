@@ -1,0 +1,11 @@
+
+build/
+build/**
+.settings/
+
+.buildpath
+.project
+
+*.o
+
+php_errors.log

@@ -75,6 +75,13 @@ namespace TheSeer\Tools {
       protected $stat;
 
       /**
+       * Length of time to keep the cached file.
+       * 
+       * @var int
+       */
+      protected $cacheTime = 30;
+      
+      /**
        * Passed in configuration properties
        *
        * @var array
@@ -92,6 +99,8 @@ namespace TheSeer\Tools {
          $this->source = '';
          $this->readPos = 0;
          $this->sourceLen = 0;
+         
+         self::$properties['processor'] = new PreProcessor();
       }
 
       public static function hashPath($path) {
@@ -124,7 +133,7 @@ namespace TheSeer\Tools {
                return true;
             }
          }
-         if (!isset(self::$properties['processor'])) {
+         if (!isset(self::$properties['processor']) || !self::$properties['processor']) {
             $proc = new PreProcessor();
          } else {
             $proc = self::$properties['processor'];
@@ -134,8 +143,8 @@ namespace TheSeer\Tools {
          if (isset(self::$properties['cache'])) {
             file_put_contents($cache, $this->source);
             
-            $log = file_get_contents('preprocessor.log');
-            file_put_contents('preprocessor.log', $log . $cache . "\t" . filemtime($cache) . PHP_EOL);
+           // $log = file_get_contents('preprocessor.log');
+           // file_put_contents('preprocessor.log', $log . date("[Y-M-d H:i:s]\t") . "{$cache}\t" . filemtime($cache) . PHP_EOL);
          }
          return true;
       }
